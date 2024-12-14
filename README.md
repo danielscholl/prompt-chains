@@ -1,30 +1,68 @@
-# LLM Hello World App
+# Prompt Chain Examples
 
-A simple Python application demonstrating the use of various LLM libraries including Anthropic's Claude.
+This repository demonstrates different prompt chain patterns using various LLM models (Google Gemini and Anthropic Claude).
 
-## Setup Instructions
+## Setup
 
-1. Create and activate a virtual environment using uv:
+1. Install dependencies:
+```bash
+uv pip install llm
+```
+
+2. Create and activate a virtual environment using uv:
 ```bash
 uv venv
 source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
 ```
 
-2. Install required packages:
+3. Install required packages:
 ```bash
-uv pip install llm openai python-dotenv llm-claude-3 anthropic
+uv pip install llm openai python-dotenv llm-claude-3 anthropic google-generativeai
 ```
 
-3. Create a `.env` file in the root directory with your API keys:
+4. Create a `.env` file in the root directory with your API keys:
 ```
 ANTHROPIC_API_KEY=your_anthropic_key_here
 OPENAI_API_KEY=your_openai_key_here
 ```
 
-4. Run the application:
+5. Run the application:
 ```bash
-python main.py
+uv run main.py
 ```
+
+## Usage
+
+Run the application with your chosen model and prompt chain:
+
+```bash
+uv run main.py --model [gemini|haiku|sonnet|opus] --chain [snowball|workers|fallback|decision|plan|human|self-correct]
+```
+
+Examples:
+```bash
+# Run default (Gemini model with snowball chain)
+uv run main.py
+
+# Use Gemini model with workers chain
+uv run main.py --chain workers
+
+# Use Claude 3 Haiku with fallback chain
+uv run main.py --model haiku --chain fallback
+
+# Use Claude 3 Sonnet with decision maker chain
+uv run main.py --model sonnet --chain decision
+```
+
+### Available Prompt Chains
+
+- `snowball`: Builds information progressively (default)
+- `workers`: Delegates tasks to individual prompts
+- `fallback`: Uses multiple models with fallback logic
+- `decision`: Uses prompts to control flow
+- `plan`: Separates planning and execution
+- `human`: Incorporates human feedback
+- `self-correct`: Reviews and corrects its own output
 
 ## Required Dependencies
 - llm
@@ -32,6 +70,7 @@ python main.py
 - python-dotenv
 - llm-claude-3
 - anthropic
+- google-generativeai
 
 ## Features
 - Demonstrates basic setup of Anthropic's Claude client
