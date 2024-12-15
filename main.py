@@ -2,7 +2,6 @@ import os
 from dotenv import load_dotenv
 import json
 import llm
-import time
 import google.generativeai as genai
 import argparse
 import random
@@ -11,6 +10,55 @@ load_dotenv()
 os.environ['GRPC_PYTHON_LOG_LEVEL'] = '0'
 
 # ------ Helpers Methods
+def parse_args():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(
+        description='Run different prompt chain patterns with various LLM models.',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='''
+Examples:
+  # Run with default settings (Gemini model, snowball chain)
+  uv run main.py
+
+  # Use specific model and chain
+  uv run main.py --model haiku --chain workers
+
+  # Run snowball chain with Gemini
+  uv run main.py --model gemini --chain snowball
+
+Chain Descriptions:
+  snowball     - Builds information progressively (good for content creation)
+  workers      - Delegates tasks to individual prompts (good for parallel tasks)
+  fallback     - Uses multiple models with fallback logic (good for reliability)
+  decision     - Uses prompts to control flow (good for dynamic responses)
+  plan         - Separates planning and execution (good for complex tasks)
+  human        - Incorporates human feedback (good for iterative refinement)
+  self-correct - Reviews and corrects its own output (good for accuracy)
+
+Models Available:
+  gemini       - Google's Gemini Flash model (fast, good for general use)
+  haiku        - Claude 3 Haiku (fast, good for simple tasks)
+  sonnet       - Claude 3 Sonnet (balanced performance)
+  opus         - Claude 3 Opus (powerful, good for complex tasks)
+''')
+
+    parser.add_argument(
+        '--model',
+        type=str,
+        choices=['gemini', 'haiku', 'sonnet', 'opus'],
+        default='gemini',
+        help='Model to use for prompts (default: %(default)s)'
+    )
+
+    parser.add_argument(
+        '--chain',
+        type=str,
+        choices=['snowball', 'workers', 'fallback', 'decision', 'plan', 'human', 'self-correct'],
+        default='snowball',
+        help='Type of prompt chain to run (default: %(default)s)'
+    )
+
+    return parser.parse_args()
 
 
 def build_models():
@@ -46,7 +94,7 @@ def generate_response(model, prompt):
             # Try to clean up the response by removing markdown code blocks if present
             text = response.text.replace('```json\n', '').replace('```', '')
             return text.strip()
-        except:
+        except Exception:
             return response.text
     elif hasattr(model, 'prompt'):  # LLM model
         response = model.prompt(prompt)
@@ -56,7 +104,6 @@ def generate_response(model, prompt):
 
 
 # ------ Prompt Chains
-
 
 def prompt_chain_snowball(model):
     """
@@ -414,55 +461,7 @@ def prompt_chain_self_correct(model):
         print(f"Original command executed successfully: {result}")
 
 
-def parse_args():
-    """Parse command line arguments"""
-    parser = argparse.ArgumentParser(
-        description='Run different prompt chain patterns with various LLM models.',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''
-Examples:
-  # Run with default settings (Gemini model, snowball chain)
-  uv run main.py
 
-  # Use specific model and chain
-  uv run main.py --model haiku --chain workers
-
-  # Run snowball chain with Gemini
-  uv run main.py --model gemini --chain snowball
-
-Chain Descriptions:
-  snowball     - Builds information progressively (good for content creation)
-  workers      - Delegates tasks to individual prompts (good for parallel tasks)
-  fallback     - Uses multiple models with fallback logic (good for reliability)
-  decision     - Uses prompts to control flow (good for dynamic responses)
-  plan         - Separates planning and execution (good for complex tasks)
-  human        - Incorporates human feedback (good for iterative refinement)
-  self-correct - Reviews and corrects its own output (good for accuracy)
-
-Models Available:
-  gemini       - Google's Gemini Flash model (fast, good for general use)
-  haiku        - Claude 3 Haiku (fast, good for simple tasks)
-  sonnet       - Claude 3 Sonnet (balanced performance)
-  opus         - Claude 3 Opus (powerful, good for complex tasks)
-''')
-
-    parser.add_argument(
-        '--model',
-        type=str,
-        choices=['gemini', 'haiku', 'sonnet', 'opus'],
-        default='gemini',
-        help='Model to use for prompts (default: %(default)s)'
-    )
-
-    parser.add_argument(
-        '--chain',
-        type=str,
-        choices=['snowball', 'workers', 'fallback', 'decision', 'plan', 'human', 'self-correct'],
-        default='snowball',
-        help='Type of prompt chain to run (default: %(default)s)'
-    )
-
-    return parser.parse_args()
 
 
 def main():
