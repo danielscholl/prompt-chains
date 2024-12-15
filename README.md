@@ -577,7 +577,7 @@ final_result = SelfCorrect.run(initial_prompt)
 
 The concepts provided here have been distilled from the excellent videos provided by [Indy Dev Dan](https://www.youtube.com/@indydevdan).
 
-Here are some additionalresources to dive deeper:
+Here are some additional resources to dive deeper:
 
 *   [Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165) - Brown, T. et al. (2020)
 *   [Chain-of-Thought Prompting Elicits Reasoning in Large Language Models](https://arxiv.org/abs/2201.11903) - Wei, J. et al. (2022)
@@ -594,6 +594,18 @@ Prompt chaining isn't just a fancy technique; it's a fundamental strategy for ge
 This section demonstrates different prompt chain patterns using various LLM models (Google Gemini and Anthropic Claude).
 
 ## Setup
+
+Prerequisites:
+- Python 3.10 or higher
+- uv package manager (recommended) or pip
+
+Required Dependencies:
+- llm>=0.12.0
+- openai>=1.0.0
+- python-dotenv>=1.0.0
+- llm-claude-3>=0.1.0
+- anthropic>=0.7.0
+- google-generativeai>=0.3.0
 
 1. Install dependencies:
 ```bash
@@ -623,6 +635,12 @@ uv run main.py
 ```
 
 ## Usage
+
+Available Models:
+- `gemini`: Google's Gemini Pro model
+- `haiku`: Anthropic's Claude 3 Haiku (fastest, most cost-effective)
+- `sonnet`: Anthropic's Claude 3 Sonnet (balanced performance)
+- `opus`: Anthropic's Claude 3 Opus (most capable)
 
 Run the application with your chosen model and prompt chain:
 
@@ -670,3 +688,18 @@ uv run main.py --model sonnet --chain decision
 
 ## Note
 Make sure to replace the API keys in `.env` with your actual keys. Never commit API keys to version control.
+
+## Security Notes
+
+1. Never commit your `.env` file to version control. Add it to your `.gitignore`:
+```bash
+echo ".env" >> .gitignore
+```
+
+2. Protect your API keys and regularly rotate them for security.
+
+## Conclusion
+
+Prompt chaining isn't just a fancy technique; it's a fundamental strategy for getting the best out of LLMs. By understanding and utilizing these patterns, you can tackle complex tasks with more precision, adaptability, and control.
+
+
